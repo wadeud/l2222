@@ -1,0 +1,31 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+// Interface for interacting with a secure vault contract
+interface SecureVault {
+    function deposit(uint256 _amount) external payable;
+    function withdraw(uint256 _amount) external;
+}
+
+contract L2Safety {
+    address public secureVaultContract;
+
+    event Deposit(address indexed account, uint256 amount);
+    event Withdrawal(address indexed account, uint256 amount);
+
+    constructor(address _secureVaultContract) {
+        secureVaultContract = _secureVaultContract;
+    }
+
+    // Deposit funds into the secure vault
+    function depositToVault() external payable {
+        SecureVault(secureVaultContract).deposit{value: msg.value}(msg.value);
+        emit Deposit(msg.sender, msg.value);
+    }
+
+    // Withdraw funds from the secure vault
+    function withdrawFromVault(uint256 _amount) external {
+        SecureVault(secureVaultContract).withdraw(_amount);
+        emit Withdrawal(msg.sender, _amount);
+    }
+}
